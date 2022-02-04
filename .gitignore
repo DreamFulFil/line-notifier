@@ -1,0 +1,40 @@
+HELP.md
+!**/src/main/**
+!**/src/test/**
+/logs
+
+### target ###
+target/
+target/classes/com
+target/generated-sources
+target/generated-test-sources
+target/test-classes
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+
+### Mac ###
+/.DS_Store
