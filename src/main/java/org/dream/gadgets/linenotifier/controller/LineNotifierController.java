@@ -1,6 +1,7 @@
 package org.dream.gadgets.linenotifier.controller;
 
 import org.dream.gadgets.linenotifier.model.dto.AuthorizeCodeAndState;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/notifier")
 public class LineNotifierController {
     
-    @PostMapping(value = "callback")
-    public ResponseEntity<String> callback(@RequestBody AuthorizeCodeAndState authorizeCodeAndState) {
+    @PostMapping(
+        value = "callback",
+        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    public ResponseEntity<String> callback(AuthorizeCodeAndState authorizeCodeAndState) {
         String code = authorizeCodeAndState.getCode();
         String state = authorizeCodeAndState.getState();
         log.info("Code: {}, State: {}", code, state);
