@@ -1,16 +1,11 @@
 package org.dream.gadgets.linenotifier.controller;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.dream.gadgets.linenotifier.model.dto.AuthorizeCodeAndState;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 public class LineNotifierController {
     
     @PostMapping(value = "callback")
-    public ResponseEntity<String> callback(@PathVariable String code, @PathVariable String state) {
+    public ResponseEntity<String> callback(@RequestBody AuthorizeCodeAndState authorizeCodeAndState) {
+        String code = authorizeCodeAndState.getCode();
+        String state = authorizeCodeAndState.getState();
         log.info("Code: {}, State: {}", code, state);
 
         // HttpHeaders headers = new HttpHeaders();
