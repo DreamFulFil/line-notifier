@@ -72,9 +72,9 @@ public class LineNotifierController {
         log.info("Fetched token from storage: {}", token);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer "+ token);
+        headers.setBearerAuth(token);
         MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-        map.add("message", "line notifier test 444555666");
+        map.add("message", "line notifier test 777888999");
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
