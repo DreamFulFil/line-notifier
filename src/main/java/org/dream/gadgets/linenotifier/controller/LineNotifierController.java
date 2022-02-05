@@ -1,9 +1,8 @@
 package org.dream.gadgets.linenotifier.controller;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dream.gadgets.linenotifier.model.dto.AccessTokenResponse;
@@ -127,10 +126,7 @@ public class LineNotifierController {
         String resetTime = responseHeaders.get("X-RateLimit-Reset").get(0);
 
         LocalDateTime formattedResetTime =
-            LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(Long.parseLong(resetTime)), 
-                TimeZone.getDefault().toZoneId()
-            );
+            LocalDateTime.ofEpochSecond(Long.parseLong(resetTime), 0, ZoneOffset.UTC); 
 
         String format = String.format(
             "訊息上限: %s%n" +
@@ -139,8 +135,8 @@ public class LineNotifierController {
             "圖片剩餘: %s%n" +
             "重置時間: %s%n",
             messageLimit, 
-            imageLimit,
             messageRemaining,
+            imageLimit,
             imageRemaining,
             formattedResetTime
         );
