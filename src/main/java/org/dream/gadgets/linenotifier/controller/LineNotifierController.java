@@ -1,7 +1,7 @@
 package org.dream.gadgets.linenotifier.controller;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.dream.gadgets.linenotifier.model.dto.AccessTokenResponse;
 import org.dream.gadgets.linenotifier.model.dto.AuthorizeCodeAndState;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/notifier")
 public class LineNotifierController {
     
-    private static final Map<String, String> tempTokenStore = new ConcurrentHashMap<>();
+    private static final Map<String, String> tempTokenStore = new HashMap<>();
 
     @PostMapping(
         value = "callback",
@@ -68,13 +68,13 @@ public class LineNotifierController {
 
     @GetMapping(value = "sendMessage")
     public ResponseEntity<String> sendMessage() {
-        String token = tempTokenStore.get("accessToken");
-        log.info("Fetched token from storage: {}", "DsKV93FvnekZQmlwxB4Ikov1iwDvuc8bEczATJPjEiY");
+        String token = tempTokenStore.get("accessToken").trim();
+        log.info("Fetched token from storage: {}", token);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer "+ "DsKV93FvnekZQmlwxB4Ikov1iwDvuc8bEczATJPjEiY");
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer "+ token);
         MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-        map.add("message", "line notifier test 123");
+        map.add("message", "line notifier test 444555666");
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
