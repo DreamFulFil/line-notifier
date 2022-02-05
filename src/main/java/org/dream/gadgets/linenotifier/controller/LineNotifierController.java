@@ -2,6 +2,7 @@ package org.dream.gadgets.linenotifier.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.dream.gadgets.linenotifier.model.dto.AccessTokenResponse;
 import org.dream.gadgets.linenotifier.model.dto.AuthorizeCodeAndState;
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/notifier")
 public class LineNotifierController {
     
-    private static final Map<String, String> tempTokenStore = new HashMap<>();
+    private static final Map<String, String> tempTokenStore = new ConcurrentHashMap<>();
 
     @PostMapping(
         value = "callback",
