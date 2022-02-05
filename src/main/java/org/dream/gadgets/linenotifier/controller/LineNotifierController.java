@@ -126,7 +126,7 @@ public class LineNotifierController {
         String resetTime = responseHeaders.get("X-RateLimit-Reset").get(0);
 
         LocalDateTime formattedResetTime =
-            LocalDateTime.ofEpochSecond(Long.parseLong(resetTime), 0, ZoneOffset.UTC); 
+            LocalDateTime.ofEpochSecond(Long.parseLong(resetTime), 0, ZoneOffset.of("+08:00"));
 
         String format = String.format(
             "訊息上限: %s%n" +
