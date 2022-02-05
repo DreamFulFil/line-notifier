@@ -1,14 +1,18 @@
 package org.dream.gadgets.linenotifier.controller;
 
-import java.util.HashMap;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dream.gadgets.linenotifier.model.dto.AccessTokenResponse;
+import org.dream.gadgets.linenotifier.model.dto.ApiStatusResponse;
 import org.dream.gadgets.linenotifier.model.dto.AuthorizeCodeAndState;
 import org.dream.gadgets.linenotifier.model.dto.GenericResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,6 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -68,14 +73,13 @@ public class LineNotifierController {
     }
 
     @GetMapping(value = "sendMessage")
-    public ResponseEntity<String> sendMessage() {
+    public ResponseEntity<String> sendMessage(@RequestParam String message) {
         String token = tempTokenStore.get("accessToken");
-        log.info("Fetched token from storage: {}", token);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBearerAuth(token);
         MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-        map.add("message", "line notifier test 777888999");
+        map.add("message", message);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
@@ -94,6 +98,54 @@ public class LineNotifierController {
         );
         ResponseEntity<String> response = ResponseEntity.ok("Message sent");
         return response;
+    }
+
+    @GetMapping(value = "apiStatus")
+    public ResponseEntity<String> apiStatus() {
+        String token = tempTokenStore.get("accessToken");
+        log.info("Fetched token from storage: {}", token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setBearerAuth(token);
+     
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ApiStatusResponse> responseEntity = restTemplate.exchange(
+            "https://notify-api.line.me/api/status",
+            HttpMethod.GET,
+            entity,
+            ApiStatusResponse.class
+        );
+
+        HttpHeaders responseHeaders = responseEntity.getHeaders();
+        String messageLimit = responseHeaders.get("X-RateLimit-Limit").get(0);
+        String imageLimit = responseHeaders.get("X-RateLimit-ImageLimit").get(0);
+        String messageRemaining = responseHeaders.get("X-RateLimit-Remaining").get(0);
+        String imageRemaining = responseHeaders.get("X-RateLimit-ImageRemaining").get(0);
+        String resetTime = responseHeaders.get("X-RateLimit-Reset").get(0);
+
+        LocalDateTime formattedResetTime =
+            LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(Long.parseLong(resetTime)), 
+                TimeZone.getDefault().toZoneId()
+            );
+
+        String format = String.format(
+            "訊息上限: %s%n" +
+            "訊息剩餘: %s%n" +
+            "圖片上限: %s%n" +
+            "圖片剩餘: %s%n" +
+            "重置時間: %s%n",
+            messageLimit, 
+            imageLimit,
+            messageRemaining,
+            imageRemaining,
+            formattedResetTime
+        );
+
+        return ResponseEntity.ok(format);
     }
 
 }
